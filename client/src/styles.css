@@ -1,3 +1,11 @@
-.App {
-  text-align: center;
+.login-btn {
+  color: #fff !important;
+}
+
+.login-opt {
+  color: #fff !important;
+}
+
+.dropdown-menu[data-bs-popper] {
+  left: -90px !important;
 }
