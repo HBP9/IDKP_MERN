@@ -37,3 +37,35 @@
 .qr-wall {
   width: 200px;
 }
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 94vh;
+  width: 100vw;
+  background: beige;
+}
+
+.signIn {
+  background-color: lightcyan;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  height: 45vh;
+  flex-direction: column;
+  width: 30vw;
+}
+
+.heading-signIn {
+  display: flex;
+  justify-content: center;
+}
+
+.password-container {
+  padding-top: 25px;
+}
+
+.signIn-btn {
+  margin-top: 30px;
+}
