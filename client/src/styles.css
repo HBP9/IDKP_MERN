@@ -69,3 +69,18 @@
 .signIn-btn {
   margin-top: 30px;
 }
+
+.scan-page {
+  display: flex;
+  height: 94vh;
+  align-items: center;
+  justify-content: center;
+  background: mistyrose;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 300px;
+}

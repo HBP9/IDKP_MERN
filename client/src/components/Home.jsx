@@ -7,7 +7,7 @@ const Home = () => {
       <div className="home-container">
         <div className="card-center">
           <img src="/images/qr.png" alt="qr" className="qr-wall" />
-          <Link to={"/qr-scan"}>
+          <Link to={"/scan"}>
             <button type="button" className="btn btn-info">
               Scan QR
             </button>
