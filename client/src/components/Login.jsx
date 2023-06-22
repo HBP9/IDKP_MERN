@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  let navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [incorrectCredentials, setIncorrectCredentials] = useState(false);
@@ -13,13 +17,24 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (username === "admin" && password === "password") {
-      console.log("Login successful");
-    } else {
-      setIncorrectCredentials(true);
+    try {
+      const response = await axios.post("http://localhost:4000/admin/login", {
+        username,
+        password,
+      });
+      if (response.data.msg === "success") {
+        Cookies.set("admin", response.data.user);
+        navigate("/");
+        setIncorrectCredentials(false);
+      } else {
+        setIncorrectCredentials(true);
+      }
+    } catch (error) {
+      console.log(error);
     }
+    window.location.reload();
   };
   return (
     <div className="login-container">

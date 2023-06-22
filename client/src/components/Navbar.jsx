@@ -1,7 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkCookie = () => {
+      const adminCookie = document.cookie
+        .split(";")
+        .find((cookie) => cookie.trim().startsWith("admin="));
+
+      if (adminCookie) {
+        setIsLoggedIn(true);
+      }
+    };
+
+    checkCookie();
+  }, []);
+
+  const logout = () => {
+    Cookies.remove("admin");
+    window.location.reload();
+  };
+
   return (
     <>
       <nav className="navbar navbar-dark bg-dark">
@@ -36,7 +57,7 @@ const Navbar = () => {
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <a className="dropdown-item" onClick={logout}>
                     Logout
                   </a>
                 </li>
