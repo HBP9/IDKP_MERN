@@ -84,3 +84,7 @@
   justify-content: center;
   width: 300px;
 }
+
+.order-container {
+  padding: 20px;
+}

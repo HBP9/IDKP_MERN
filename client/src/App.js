@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 import ScanQR from "./components/ScanQR";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/scan" element={<ScanQR />} />
+          <Route exact path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </div>
