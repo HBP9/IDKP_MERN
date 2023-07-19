@@ -11,16 +11,15 @@ const Dashboard = () => {
   ]);
 
   const completeOrder = (index) => {
-    const updatedOrders = [...orders];
-    updatedOrders[index].status = "completed";
+    const updatedOrders = orders.filter((_, idx) => idx !== index);
     setOrders(updatedOrders);
   };
 
   const cancelOrder = (index) => {
-    const updatedOrders = [...orders];
-    updatedOrders[index].status = "canceled";
+    const updatedOrders = orders.filter((_, idx) => idx !== index);
     setOrders(updatedOrders);
   };
+
   return (
     <div className="container order-container">
       {orders.length === 0 ? (
