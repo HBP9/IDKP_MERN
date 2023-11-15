@@ -97,7 +97,8 @@
       flex-direction: column;
     }
 
-    .list-cat {
+    .list-cat,
+    .list-table {
       margin-bottom: 10px;
     }
 
@@ -114,7 +115,8 @@
   }
 }
 
-.menu-head {
+.menu-head,
+.table-head {
   display: flex;
   justify-content: space-between;
 }
@@ -150,7 +152,8 @@
   padding: 10px;
 }
 
-.list-cat {
+.list-cat,
+.list-table {
   background-color: #fff;
   border: 1px solid #ddd;
   margin-bottom: 10px;
@@ -159,7 +162,8 @@
   border-radius: 5px;
 }
 
-.category-container {
+.category-container,
+.table-container {
   display: flex;
   justify-content: space-between;
 }
