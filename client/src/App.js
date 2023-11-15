@@ -8,6 +8,7 @@ import ScanQR from "./components/ScanQR";
 import Dashboard from "./components/Dashboard";
 import EditMenu from "./components/EditMenu";
 import EditTable from "./components/EditTable";
+import Orders from "./components/Orders";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/editMenu" element={<EditMenu />} />
           <Route exact path="/editTable" element={<EditTable />} />
+          <Route exact path="/orders" element={<Orders />} />
         </Routes>
       </Router>
     </div>
