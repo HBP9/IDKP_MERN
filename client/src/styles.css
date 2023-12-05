@@ -89,7 +89,8 @@
   padding: 20px;
 }
 
-.edit-container {
+.edit-container,
+.orders-container {
   padding: 20px;
   @media only screen and (max-width: 600px) {
     .list-container {
@@ -164,6 +165,24 @@
 
 .category-container,
 .table-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item-table-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  padding: 10px;
+}
+
+.item-t-head {
+  font-size: 1.5rem;
   display: flex;
   justify-content: space-between;
 }
