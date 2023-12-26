@@ -30,6 +30,7 @@ const EditTable = () => {
                 <div className="table-container">
                   <div>{table.name}</div>
                   <div className="buttons">
+                    <button className="generate">Generate QR</button>
                     <button className="edit">Edit</button>
                     <button className="delete">Delete</button>
                   </div>

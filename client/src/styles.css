@@ -211,6 +211,11 @@
   color: #fff;
 }
 
+.generate {
+  background-color: #65b741;
+  color: #fff;
+}
+
 .item-details {
   display: flex;
   justify-content: space-between;
