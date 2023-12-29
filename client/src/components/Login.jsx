@@ -25,7 +25,7 @@ const Login = () => {
         password,
       });
       if (response.data.msg === "success") {
-        Cookies.set("admin", response.data.user);
+        localStorage.setItem("admin", JSON.stringify(response.data.user));
         navigate("/");
         setIncorrectCredentials(false);
       } else {

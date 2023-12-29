@@ -5,21 +5,19 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const checkCookie = () => {
-      const adminCookie = document.cookie
-        .split(";")
-        .find((cookie) => cookie.trim().startsWith("admin="));
+    const checkLocalStorage = () => {
+      const adminData = localStorage.getItem("admin");
 
-      if (adminCookie) {
+      if (adminData) {
         setIsLoggedIn(true);
       }
     };
 
-    checkCookie();
+    checkLocalStorage();
   }, []);
 
   const logout = () => {
-    Cookies.remove("admin");
+    localStorage.removeItem("admin");
     window.location.reload();
   };
 
