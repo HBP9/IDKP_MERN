@@ -47,10 +47,20 @@ router.post("/addTable", adminCheck.isAdmin(), async (req, res) => {
   }
 });
 
-// router.get("/getTables", adminCheck.isAdmin(), async (req, res) => {
+router.get("/getTables", adminCheck.isAdminQuery(), async (req, res) => {
+  try {
+    const tables = await Table.find({ adminId: req.admin._id });
+    return res.status(200).json({ tables });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// router.delete("/deleteTable", adminCheck.isAdminQuery(), async (req, res) => {
 //   try {
-//     const tables = await Table.find({ adminId: req.admin._id });
-//     return res.status(200).json({ tables });
+//     const table = await Table.findOneAndDelete({ adminId: req.admin._id });
+//     return res.status(200).json({ message: "Table Deleted Successfully" });
 //   } catch (error) {
 //     console.error("Error:", error);
 //     res.status(500).json({ error: "Internal Server Error" });

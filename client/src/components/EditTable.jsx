@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, message } from "antd";
+import { Modal } from "antd";
 import axios from "axios";
 
 const EditTable = () => {
@@ -23,6 +23,7 @@ const EditTable = () => {
         setTableName("");
         setIsTableModalOpen(false);
         setTableError(null);
+        fetchTables();
       }
     } catch (error) {
       console.log(error);
@@ -40,22 +41,22 @@ const EditTable = () => {
     setTableError(null);
   };
 
-  // const fetchTables = async () => {
-  //   const username = localStorage.getItem("admin");
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:4000/admin/getTables`,
-  //       { params: { username: username } }
-  //     );
-  //     setTables(response.data.tables || []);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const fetchTables = async () => {
+    const username = localStorage.getItem("admin");
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/admin/getTables`,
+        { params: { username: username ? username.replace(/['"]+/g, "") : "" } }
+      );
+      setTables(response.data.tables || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchTables();
-  // }, []);
+  useEffect(() => {
+    fetchTables();
+  }, []);
   return (
     <div className="edit-container">
       <div className="table-head">
@@ -87,7 +88,7 @@ const EditTable = () => {
             {tables.map((table, index) => (
               <li className="list-table" key={index}>
                 <div className="table-container">
-                  <div>{table.name}</div>
+                  <div>{table.tableName}</div>
                   <div className="buttons">
                     <button className="generate">Generate QR</button>
                     <button className="edit">Edit</button>
