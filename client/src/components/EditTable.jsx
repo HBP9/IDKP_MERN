@@ -5,12 +5,17 @@ import axios from "axios";
 const EditTable = () => {
   const [tables, setTables] = useState([]);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  // const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [tableName, setTableName] = useState("");
   const [TableError, setTableError] = useState(null);
 
   const showTableModal = () => {
     setIsTableModalOpen(true);
   };
+
+  // const showEditModal = () => {
+  //   setIsEditModalOpen(true);
+  // };
 
   const submitTable = async () => {
     const username = localStorage.getItem("admin");
@@ -35,11 +40,19 @@ const EditTable = () => {
     }
   };
 
+  // const submitEdit = async () => {};
+
   const cancelTable = () => {
     setTableName("");
     setIsTableModalOpen(false);
     setTableError(null);
   };
+
+  // const cancelEdit = () => {
+  //   setTableName("");
+  //   setIsEditModalOpen(false);
+  //   setTableError(null);
+  // };
 
   const fetchTables = async () => {
     const username = localStorage.getItem("admin");
@@ -57,6 +70,20 @@ const EditTable = () => {
   useEffect(() => {
     fetchTables();
   }, []);
+
+  const deleteTable = async (tableId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:4000/admin/deleteTable`,
+        { params: { _id: tableId } }
+      );
+      if (response.data.message === "Table Deleted Successfully") {
+        fetchTables();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="edit-container">
       <div className="table-head">
@@ -92,7 +119,31 @@ const EditTable = () => {
                   <div className="buttons">
                     <button className="generate">Generate QR</button>
                     <button className="edit">Edit</button>
-                    <button className="delete">Delete</button>
+                    <button
+                      className="delete"
+                      onClick={() => deleteTable(table._id)}
+                    >
+                      Delete
+                    </button>
+                    {/* <Modal
+                      title="Edit Table"
+                      open={isEditModalOpen}
+                      onOk={submitEdit}
+                      onCancel={cancelEdit}
+                    >
+                      <div className="table-modal">
+                        <label htmlFor="tableName">Table Name:</label>
+                        <input
+                          type="text"
+                          id="editName"
+                          value={tableName}
+                          onChange={(e) => setTableName(e.target.value)}
+                        />
+                        {TableError && (
+                          <div className="error-message">{TableError}</div>
+                        )}
+                      </div>
+                    </Modal> */}
                   </div>
                 </div>
               </li>

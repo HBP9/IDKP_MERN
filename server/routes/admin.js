@@ -57,14 +57,29 @@ router.get("/getTables", adminCheck.isAdminQuery(), async (req, res) => {
   }
 });
 
-// router.delete("/deleteTable", adminCheck.isAdminQuery(), async (req, res) => {
-//   try {
-//     const table = await Table.findOneAndDelete({ adminId: req.admin._id });
-//     return res.status(200).json({ message: "Table Deleted Successfully" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+router.delete("/deleteTable", async (req, res) => {
+  try {
+    const table = await Table.findOneAndDelete({ _id: req.query._id });
+    return res.status(200).json({ message: "Table Deleted Successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.put("/editTable", async (req, res) => {
+  const { _id, updatedData } = req.body;
+  try {
+    const table = await Table.findOneAndUpdate({ _id }, updatedData, {
+      new: true,
+    });
+    return res
+      .status(200)
+      .json({ message: "Table Updated Successfully", updatedTable: table });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 module.exports = router;
