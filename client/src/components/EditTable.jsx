@@ -5,7 +5,7 @@ import axios from "axios";
 const EditTable = () => {
   const [tables, setTables] = useState([]);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-  // const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [tableName, setTableName] = useState("");
   const [TableError, setTableError] = useState(null);
 
@@ -13,9 +13,10 @@ const EditTable = () => {
     setIsTableModalOpen(true);
   };
 
-  // const showEditModal = () => {
-  //   setIsEditModalOpen(true);
-  // };
+  const showEditModal = (tableData) => {
+    setIsEditModalOpen(true);
+    setTableName(tableData.tableName);
+  };
 
   const submitTable = async () => {
     const username = localStorage.getItem("admin");
@@ -40,7 +41,7 @@ const EditTable = () => {
     }
   };
 
-  // const submitEdit = async () => {};
+  const submitEdit = async () => {};
 
   const cancelTable = () => {
     setTableName("");
@@ -48,11 +49,11 @@ const EditTable = () => {
     setTableError(null);
   };
 
-  // const cancelEdit = () => {
-  //   setTableName("");
-  //   setIsEditModalOpen(false);
-  //   setTableError(null);
-  // };
+  const cancelEdit = () => {
+    setTableName("");
+    setIsEditModalOpen(false);
+    setTableError(null);
+  };
 
   const fetchTables = async () => {
     const username = localStorage.getItem("admin");
@@ -118,14 +119,19 @@ const EditTable = () => {
                   <div>{table.tableName}</div>
                   <div className="buttons">
                     <button className="generate">Generate QR</button>
-                    <button className="edit">Edit</button>
+                    <button
+                      className="edit"
+                      onClick={() => showEditModal(table)}
+                    >
+                      Edit
+                    </button>
                     <button
                       className="delete"
                       onClick={() => deleteTable(table._id)}
                     >
                       Delete
                     </button>
-                    {/* <Modal
+                    <Modal
                       title="Edit Table"
                       open={isEditModalOpen}
                       onOk={submitEdit}
@@ -143,7 +149,7 @@ const EditTable = () => {
                           <div className="error-message">{TableError}</div>
                         )}
                       </div>
-                    </Modal> */}
+                    </Modal>
                   </div>
                 </div>
               </li>
