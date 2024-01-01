@@ -8,6 +8,7 @@ const EditTable = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [tableName, setTableName] = useState("");
   const [TableError, setTableError] = useState(null);
+  const [qrImage, setQrImage] = useState();
 
   const showTableModal = () => {
     setIsTableModalOpen(true);
@@ -105,6 +106,33 @@ const EditTable = () => {
       console.log(error);
     }
   };
+
+  const generateQRTable = async (tableData) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/admin/generateQR`,
+        {
+          params: {
+            tableName: tableData.tableName,
+            adminID: tableData.adminId,
+          },
+        }
+      );
+      if (response) {
+        setQrImage(response.data.qrImage);
+        const newTab = window.open("", "_blank");
+        newTab.document.write(
+          "<html><head><title>QR Code</title></head><body>"
+        );
+        newTab.document.write('<img src="' + qrImage + '" />');
+        newTab.document.write("</body></html>");
+        newTab.document.close();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="edit-container">
       <div className="table-head">
@@ -138,7 +166,12 @@ const EditTable = () => {
                 <div className="table-container">
                   <div>{table.tableName}</div>
                   <div className="buttons">
-                    <button className="generate">Generate QR</button>
+                    <button
+                      className="generate"
+                      onClick={() => generateQRTable(table)}
+                    >
+                      Generate QR
+                    </button>
                     <button
                       className="edit"
                       onClick={() => showEditModal(table)}
