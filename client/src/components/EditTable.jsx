@@ -41,7 +41,27 @@ const EditTable = () => {
     }
   };
 
-  const submitEdit = async () => {};
+  const submitEdit = async (tableId, newName) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:4000/admin/editTable`,
+        { _id: tableId, updatedData: { tableName: newName } }
+      );
+      if (response.data.message === "Table Updated Successfully") {
+        setTableName("");
+        setIsEditModalOpen(false);
+        setTableError(null);
+        fetchTables();
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data && error.response.data.error) {
+        setTableError(error.response.data.error);
+      } else {
+        setTableError("An error occurred while updating the table.");
+      }
+    }
+  };
 
   const cancelTable = () => {
     setTableName("");
@@ -134,7 +154,7 @@ const EditTable = () => {
                     <Modal
                       title="Edit Table"
                       open={isEditModalOpen}
-                      onOk={submitEdit}
+                      onOk={() => submitEdit(table._id, tableName)}
                       onCancel={cancelEdit}
                     >
                       <div className="table-modal">
