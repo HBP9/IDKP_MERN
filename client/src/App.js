@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard";
 import EditMenu from "./components/EditMenu";
 import EditTable from "./components/EditTable";
 import Orders from "./components/Orders";
+import FoodMenu from "./components/FoodMenu";
 
 function App() {
   return (
@@ -23,6 +24,11 @@ function App() {
           <Route exact path="/editMenu" element={<EditMenu />} />
           <Route exact path="/editTable" element={<EditTable />} />
           <Route exact path="/orders" element={<Orders />} />
+          <Route
+            exact
+            path="/getMenu/:tableName/:adminId"
+            element={<FoodMenu />}
+          />
         </Routes>
       </Router>
     </div>
