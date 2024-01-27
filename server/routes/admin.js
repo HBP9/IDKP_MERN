@@ -3,8 +3,10 @@ const router = express.Router();
 const Admin = require("../models/admins");
 const Table = require("../models/tables");
 const Category = require("../models/categories");
+const Food = require("../models/food");
 const adminCheck = require("../middlewares/isAdmin");
 const QRCode = require("qrcode");
+const mongoose = require("mongoose");
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -160,6 +162,84 @@ router.delete("/deleteCategory", async (req, res) => {
   try {
     const category = await Category.findOneAndDelete({ _id: req.query._id });
     return res.status(200).json({ message: "Category Deleted Successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/addMenu", adminCheck.isAdmin(), async (req, res) => {
+  const { itemName, price, categoryId } = req.body;
+  try {
+    const existingItem = await Food.findOne({
+      itemName,
+      price,
+      categoryId,
+      adminId: req.admin._id,
+    });
+
+    if (existingItem) {
+      return res.status(409).json({ error: "Food Item Already Exist" });
+    }
+    const newItem = new Food({
+      itemName,
+      price,
+      categoryId,
+      adminId: req.admin._id,
+    });
+    await newItem.save();
+    return res.status(201).send("Item Added");
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/getItems", adminCheck.isAdminQuery(), async (req, res) => {
+  const categoryId = req.query.categoryId;
+  try {
+    const items = await Food.find({ categoryId });
+    if (items.length > 0) {
+      res.json({ items });
+    } else {
+      res.status(404).json({ error: "No items found for the given category" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.put("/editItem", async (req, res) => {
+  const { _id, updatedData } = req.body;
+  try {
+    const item = await Food.findOneAndUpdate({ _id }, updatedData, {
+      new: true,
+    });
+    return res.status(200).json({
+      message: "Item Updated Successfully",
+      updatedItem: item,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/deleteItem", async (req, res) => {
+  try {
+    const item = await Food.findOneAndDelete({ _id: req.query._id });
+    return res.status(200).json({ message: "Item Deleted Successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/deleteItemsByCategory", async (req, res) => {
+  try {
+    const items = await Food.deleteMany({ categoryId: req.query.categoryId });
+    return res.status(200).json({ message: "Item Deleted Successfully" });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });

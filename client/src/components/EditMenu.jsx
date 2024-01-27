@@ -3,39 +3,25 @@ import { Modal } from "antd";
 import axios from "axios";
 
 const EditMenu = () => {
-  // const initialCategories = [
-  //   {
-  //     name: "Snacks",
-  //     items: [
-  //       { name: "Fries", price: "$8" },
-  //       { name: "Chips", price: "$5" },
-  //     ],
-  //   },
-  //   {
-  //     name: "Fast Food",
-  //     items: [
-  //       { name: "Burger", price: "$10" },
-  //       { name: "Pizza", price: "$12" },
-  //     ],
-  //   },
-  //   {
-  //     name: "Wraps",
-  //     items: [
-  //       { name: "Veggie Wrap", price: "$6" },
-  //       { name: "Chicken Wrap", price: "$8" },
-  //     ],
-  //   },
-  // ];
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [CategoryError, setCategoryError] = useState(null);
   const [isCategoryEditModalOpen, setIsCategoryEditModalOpen] = useState(false);
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
+  const [itemName, setItemName] = useState("");
+  const [price, setPrice] = useState(0);
+  const [ItemError, setItemError] = useState(null);
+  const [items, setItems] = useState([]);
+  const [isItemEditModal, setIsItemEditModal] = useState(false);
 
-  // const toggleCategory = (index) => {
-  //   setActiveCategory(index === activeCategory ? null : index);
-  // };
+  const toggleCategory = (index) => {
+    setActiveCategory(index === activeCategory ? null : index);
+    if (index !== activeCategory) {
+      setItems([]);
+    }
+  };
 
   const showCategoryModal = () => {
     setIsCategoryModalOpen(true);
@@ -91,6 +77,12 @@ const EditMenu = () => {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    if (activeCategory !== null) {
+      fetchItems(categories[activeCategory]._id);
+    }
+  }, [activeCategory]);
+
   const showEditCategoryModal = (categoryData) => {
     setIsCategoryEditModalOpen(true);
     setCategoryName(categoryData.categoryName);
@@ -131,7 +123,117 @@ const EditMenu = () => {
         { params: { _id: categoryId } }
       );
       if (response.data.message === "Category Deleted Successfully") {
+        const itemResponse = await axios.delete(
+          `http://localhost:4000/admin/deleteItemsByCategory`,
+          { params: { categoryId } }
+        );
         fetchCategories();
+        if (itemResponse.data.message === "Item Deleted Successfully") {
+          console.log("Completed Process");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addItem = () => {
+    setIsAddItemModalOpen(true);
+    setItemError(null);
+  };
+
+  const submitItem = async (categoryId) => {
+    const username = localStorage.getItem("admin");
+    try {
+      const response = await axios.post("http://localhost:4000/admin/addMenu", {
+        itemName,
+        price,
+        categoryId,
+        username: username ? username.replace(/['"]+/g, "") : "",
+      });
+      if (response.data === "Item Added") {
+        setIsAddItemModalOpen(false);
+        setItemName("");
+        setPrice(0);
+        setItemError(null);
+        fetchItems(categories[activeCategory]._id);
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data && error.response.data.error) {
+        setItemError(error.response.data.error);
+      } else {
+        setItemError("An error occurred while adding the Item.");
+      }
+    }
+  };
+
+  const cancelItem = () => {
+    setIsAddItemModalOpen(false);
+    setItemName("");
+    setPrice(0);
+    setItemError(null);
+  };
+
+  const fetchItems = async (categoryId) => {
+    const username = localStorage.getItem("admin");
+    try {
+      const response = await axios.get(`http://localhost:4000/admin/getItems`, {
+        params: {
+          username: username ? username.replace(/['"]+/g, "") : "",
+          categoryId,
+        },
+      });
+      setItems(response.data.items || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const showItemEditModal = (itemData) => {
+    setIsItemEditModal(true);
+    setItemName(itemData.itemName);
+    setPrice(itemData.price);
+  };
+
+  const cancelItemEdit = () => {
+    setItemName("");
+    setPrice(0);
+    setIsItemEditModal(false);
+    setItemError(null);
+  };
+
+  const submitItemEdit = async (itemId, newName, newPrice) => {
+    try {
+      const response = await axios.put(`http://localhost:4000/admin/editItem`, {
+        _id: itemId,
+        updatedData: { itemName: newName, price: newPrice },
+      });
+      if (response.data.message === "Item Updated Successfully") {
+        setItemName("");
+        setPrice(0);
+        setIsItemEditModal(false);
+        setItemError(null);
+        fetchItems(categories[activeCategory]._id);
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data && error.response.data.error) {
+        setCategoryError(error.response.data.error);
+      } else {
+        setCategoryError("An error occurred while updating the table.");
+      }
+    }
+  };
+
+  const deleteItem = async (itemId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:4000/admin/deleteItem`,
+        { params: { _id: itemId } }
+      );
+      if (response.data.message === "Item Deleted Successfully") {
+        fetchItems(categories[activeCategory]._id);
       }
     } catch (error) {
       console.log(error);
@@ -175,11 +277,11 @@ const EditMenu = () => {
             {categories.map((category, index) => (
               <li className="list-cat" key={index}>
                 <div
-                  // onClick={() => toggleCategory(index)}
+                  onClick={() => toggleCategory(index)}
                   className="category-container"
                 >
                   <div>{category.categoryName}</div>
-                  <div className="buttons">
+                  <div className="buttons" onClick={(e) => e.stopPropagation()}>
                     <button
                       className="edit"
                       onClick={() => showEditCategoryModal(category)}
@@ -192,7 +294,9 @@ const EditMenu = () => {
                     >
                       Delete
                     </button>
-                    <button className="add-menu">Add Menu</button>
+                    <button className="add-menu" onClick={() => addItem()}>
+                      Add Menu
+                    </button>
                     <Modal
                       title="Edit Category"
                       open={isCategoryEditModalOpen}
@@ -214,19 +318,89 @@ const EditMenu = () => {
                         )}
                       </div>
                     </Modal>
+                    <Modal
+                      title="Add Item"
+                      open={isAddItemModalOpen}
+                      onOk={() => submitItem(category._id)}
+                      onCancel={cancelItem}
+                    >
+                      <div className="table-modal">
+                        <label htmlFor="itemName">Item Name:</label>
+                        <input
+                          type="text"
+                          id="editName"
+                          value={itemName}
+                          onChange={(e) => setItemName(e.target.value)}
+                        />
+                        <label htmlFor="price">Price:</label>
+                        <input
+                          type="number"
+                          id="editName"
+                          value={price}
+                          onChange={(e) => setPrice(e.target.value)}
+                        />
+                        {ItemError && (
+                          <div className="error-message">{ItemError}</div>
+                        )}
+                      </div>
+                    </Modal>
                   </div>
                 </div>
                 {activeCategory === index && (
                   <ul>
-                    {category.items.map((item, itemIndex) => (
-                      <li className="item-details" key={itemIndex}>
-                        {item.name} - {item.price}
-                        <div className="buttons">
-                          <button className="edit">Edit</button>
-                          <button className="delete">Delete</button>
-                        </div>
-                      </li>
-                    ))}
+                    {items.length > 0 ? (
+                      items.map((item, itemIndex) => (
+                        <li className="item-details" key={itemIndex}>
+                          {item.itemName} - ₹&nbsp;{item.price}
+                          <div className="buttons">
+                            <button
+                              className="edit"
+                              onClick={() => showItemEditModal(item)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="delete"
+                              onClick={() => deleteItem(item._id)}
+                            >
+                              Delete
+                            </button>
+                            <Modal
+                              title="Edit Menu"
+                              open={isItemEditModal}
+                              onOk={() =>
+                                submitItemEdit(item._id, itemName, price)
+                              }
+                              onCancel={cancelItemEdit}
+                            >
+                              <div className="table-modal">
+                                <label htmlFor="itemName">Item Name:</label>
+                                <input
+                                  type="text"
+                                  id="editName"
+                                  value={itemName}
+                                  onChange={(e) => setItemName(e.target.value)}
+                                />
+                                <label htmlFor="price">Price:</label>
+                                <input
+                                  type="number"
+                                  id="editName"
+                                  value={price}
+                                  onChange={(e) => setPrice(e.target.value)}
+                                />
+                                {ItemError && (
+                                  <div className="error-message">
+                                    {ItemError}
+                                  </div>
+                                )}
+                              </div>
+                            </Modal>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="item-details">No items added yet</li>
+                    )}
                   </ul>
                 )}
               </li>
