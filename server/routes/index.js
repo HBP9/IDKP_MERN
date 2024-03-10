@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Admins = require("../models/admins");
 const data = require("../adminList.js");
+const bcrypt = require("bcrypt");
 
 router.use("/user", require("./user.js"));
 router.use("/admin", require("./admin.js"));
@@ -17,7 +18,7 @@ router.use("/admin", require("./admin.js"));
 // });
 
 router.post("/superadmin", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, restaurantName } = req.body;
 
   try {
     const existingUser = await Admins.findOne({ username });
@@ -25,7 +26,12 @@ router.post("/superadmin", async (req, res) => {
       return res.status(400).send("User already exists");
     }
 
-    const newAdmin = new Admins({ username, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new Admins({
+      username,
+      password: hashedPassword,
+      restaurantName,
+    });
     await newAdmin.save();
     return res.status(201).send("Admin Added");
   } catch (error) {

@@ -28,13 +28,13 @@ const Login = () => {
         localStorage.setItem("admin", JSON.stringify(response.data.user));
         navigate("/");
         setIncorrectCredentials(false);
+        window.location.reload();
       } else {
         setIncorrectCredentials(true);
       }
     } catch (error) {
       console.log(error);
     }
-    window.location.reload();
   };
   return (
     <div className="login-container">
@@ -49,6 +49,7 @@ const Login = () => {
             name="username"
             value={username}
             onChange={handleUsernameChange}
+            autoComplete="new-password"
           />
         </div>
         <div className="password-container">
@@ -60,6 +61,7 @@ const Login = () => {
             name="password"
             value={password}
             onChange={handlePasswordChange}
+            autoComplete="new-password"
           />
         </div>
         {incorrectCredentials && (

@@ -9,6 +9,10 @@ const AdminSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  restaurantName: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = new mongoose.model("Admins", AdminSchema);

@@ -10,20 +10,23 @@ import EditMenu from "./components/EditMenu";
 import EditTable from "./components/EditTable";
 import Orders from "./components/Orders";
 import FoodMenu from "./components/FoodMenu";
+import Layout from "./Layout";
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <Navbar />
+        {/* <Navbar /> */}
         <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/scan" element={<ScanQR />} />
-          <Route exact path="/dashboard" element={<Dashboard />} />
-          <Route exact path="/editMenu" element={<EditMenu />} />
-          <Route exact path="/editTable" element={<EditTable />} />
-          <Route exact path="/orders" element={<Orders />} />
+          <Route element={<Layout />}>
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/scan" element={<ScanQR />} />
+            <Route exact path="/dashboard" element={<Dashboard />} />
+            <Route exact path="/editMenu" element={<EditMenu />} />
+            <Route exact path="/editTable" element={<EditTable />} />
+            <Route exact path="/orders" element={<Orders />} />
+          </Route>
           <Route
             exact
             path="/getMenu/:tableName/:adminId"

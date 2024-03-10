@@ -7,6 +7,7 @@ const Food = require("../models/food");
 const adminCheck = require("../middlewares/isAdmin");
 const QRCode = require("qrcode");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -18,17 +19,31 @@ router.post("/login", async (req, res) => {
     });
   }
 
-  const checkUsername = await Admin.findOne({ username });
-  if (!checkUsername) {
-    return res.send({ status: "error", message: "Invalid Username" });
+  const user = await Admin.findOne({ username });
+  if (!user) {
+    return res.send({
+      status: "error",
+      message: "Invalid Username or password",
+    });
   }
-
-  const checkPassword = await Admin.findOne({ password });
-  if (!checkPassword) {
-    return res.send({ status: "error", message: "Invalid Password" });
-  }
-
-  return res.send({ msg: "success", user: username });
+  await bcrypt
+    .compare(password, user.password)
+    .then((result) => {
+      if (result) {
+        return res.send({ msg: "success", user: username });
+      } else {
+        return res.send({
+          status: "error",
+          message: "Invalid Username or Password",
+        });
+      }
+    })
+    .catch((err) => {
+      return res.send({
+        status: "error",
+        message: err,
+      });
+    });
 });
 
 router.post("/addTable", adminCheck.isAdmin(), async (req, res) => {
